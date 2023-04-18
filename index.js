@@ -5,12 +5,14 @@ const displayDiv = document.getElementById("display-div")
 const placeholder = document.getElementById("placeholder")
 const watchlist = document.getElementById("watchlist-display-div")
 
+let watchlistArray = JSON.parse(localStorage.getItem("watchlistArray")) || [];
+
 if (search){
 
     search.addEventListener("click", function () {
         let input = document.getElementById("input").value;
         let movieArray = [];
-        let watchlistArray = [];
+        
     
         displayDiv.innerHTML = ''; 
     
@@ -33,7 +35,7 @@ if (search){
     
                             const watchlistBtn = document.createElement("button");
                             watchlistBtn.classList.add("watchlist-btn");
-                            watchlistBtn.textContent = "Watchlist";
+                            watchlistBtn.textContent = "Add to Watchlist";
                             watchlistBtn.addEventListener("click", function () {
                                 watchlistArray.push(data);
                                 console.log(watchlistArray);
@@ -78,24 +80,35 @@ function loadWatchlist() {
                 const startExploring = document.getElementById("start-exploring");
                 startExploring.style.display = "none";
 
-                movieDiv.innerHTML = `
-                    <img id="poster" src="${movie.Poster}" alt="">
-                    <div class="information">
-                        <div class="title">
-                            <h3 class="movie-title">${movie.Title}</h3>
-                            <i class="fa-solid fa-star"></i>
-                            <h3>${movie.imdbRating}</h3>
-                        </div>
-                        <div class="data">
-                            <p>${movie.Runtime}</p>
-                            <p>${movie.Genre}</p>
-                        </div>
-                        <p class="plot">${movie.Plot}</p>
-                    </div>
-                `;
+                const removeBtn = document.createElement("button");
+                removeBtn.classList.add("watchlist-btn");
+                removeBtn.textContent = "Remove";
+                removeBtn.addEventListener("click", function () {
+                    watchlistArray.splice(index, 1);
+                    localStorage.setItem("watchlistArray", JSON.stringify(watchlistArray));
+                    watchlist.removeChild(movieDiv);
+                });
 
-                watchlist.appendChild(movieDiv);
-            });
+                movieDiv.innerHTML = `
+                <img id="poster" src="${movie.Poster}" alt="">
+                <div class="information">
+                    <div class="title">
+                        <h3 class="movie-title">${movie.Title}</h3>
+                        <i class="fa-solid fa-star"></i>
+                        <h3>${movie.imdbRating}</h3>
+                    </div>
+                    <div class="data">
+                        <p>${movie.Runtime}</p>
+                        <p>${movie.Genre}</p>
+                    </div>
+                    <p class="plot">${movie.Plot}</p>
+                </div>
+            `;
+
+            const dataDiv = movieDiv.querySelector('.data');
+            dataDiv.appendChild(removeBtn);
+            watchlist.appendChild(movieDiv);
+        });
         }
     }
 }
